@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './plugins/element.js'
+import './assets/css/element-variables.scss'
+import './assets/css/base.css'
+
 
 // 配置 ElementUI
 // import ElementUI from 'element-ui'
