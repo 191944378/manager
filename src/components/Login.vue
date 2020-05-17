@@ -15,16 +15,16 @@
         </div>
         <!-- 表单 -->
         <div class="login-form">
-          <el-form ref="form" :model="form">
-            <el-form-item>
-              <el-input v-model="form.name"></el-input>
+          <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0">
+            <el-form-item prop="username">
+              <el-input v-model="loginForm.username" prefix-icon="iconfont icon-RectangleCopy4" placeholder="用户名 / 邮箱"></el-input>
             </el-form-item>
-            <el-form-item>
-              <el-input v-model="form.name"></el-input>
+            <el-form-item prop="password">
+              <el-input v-model="loginForm.password" prefix-icon="iconfont icon-RectangleCopy28" type="password" placeholder="密码"></el-input>
             </el-form-item>
             <el-form-item class="form-buttons">
-             <el-button type="primary">登录</el-button>
-             <el-button plain>重置</el-button>
+             <el-button type="primary" @click="login">登录</el-button>
+             <el-button plain @click="resetLoginForm">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -34,30 +34,63 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+      loginForm: {
+        username: '',
+        password: '',
+      },
+      loginFormRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+        ], 
+        password: [
+          { required: true, message: '请输入登陆密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
+  
   methods: {
     onSubmit() {
-      console.log('submit!');
+      console.log('submit!')
+    },
+    resetLoginForm() {
+      this.$refs.loginFormRef.resetFields()
+    },
+    login(){
+      this.$refs.loginFormRef.validate(boolean => {
+        if (!boolean) return
+          this.axios.post('/login', this.loginForm).then(res => {
+          if(res.data.meta.status == 200){
+            this.$message({
+              message: '登录成功',
+              type: 'success',
+              center: true
+            })
+            localStorage.setItem('token', res.data.data.token)
+            this.$router.push('./home')
+          } else {
+            this.$message({
+              message: '用户名或密码错误',
+              type: 'error',
+              center: true
+            })
+          }
+        })
+      })
+
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+
   .container{
     width: 100%;
     height: 100%;
@@ -117,6 +150,10 @@ export default {
           width: 100%;
           padding: 0 20px;
           box-sizing: border-box;
+
+           /deep/.iconfont{
+            font-size: 20px;
+          }
 
           .form-buttons{
             display: flex;
