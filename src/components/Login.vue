@@ -65,7 +65,7 @@ export default {
     login(){
       this.$refs.loginFormRef.validate(boolean => {
         if (!boolean) return
-          this.axios.post('/login', this.loginForm).then(res => {
+        this.axios.post('/login', this.loginForm).then(res => {
           if(res.data.meta.status == 200){
             this.$message({
               message: '登录成功',
@@ -73,7 +73,7 @@ export default {
               center: true
             })
             localStorage.setItem('token', res.data.data.token)
-            this.$router.push('./home')
+            this.$router.push('./desktop')
           } else {
             this.$message({
               message: '用户名或密码错误',
@@ -94,12 +94,12 @@ export default {
   .container{
     width: 100%;
     height: 100%;
-    background-color: rgb(59, 73, 97);
+    background-color: rgb(58, 85, 133);
     display: flex;
 
     #introduce-section{
       flex: 2;
-      background-color: rgb(48, 57, 74);
+      background-color: rgb(35, 53, 85);
       display: flex;
       flex-direction: column;
       align-items: center;
