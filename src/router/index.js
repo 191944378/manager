@@ -1,15 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
+import Desktop from '../components/Desktop.vue'
 import Home from '../components/Home.vue'
+import Users from '../components/user/Users.vue'
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [
-    { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/desktop' },
     { path: '/login', component: Login },
-    { path: '/home', component: Home }
+    { path: '/desktop', redirect: '/home', component: Desktop, children: [
+      {path: '/home', component: Home},
+      {path: '/users', component: Users}
+    ] },
   ]
 })
 
@@ -18,7 +23,7 @@ router.beforeEach((to, from, next) => {
     if (!localStorage.token) {
       next()
     } else {
-      next('/home')
+      next('/desktop')
     }
   } else {
     if (!localStorage.token) {
@@ -27,9 +32,6 @@ router.beforeEach((to, from, next) => {
       next()
     }
   }
-
-    
-  
 })
 
 export default router
