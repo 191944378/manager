@@ -12,7 +12,11 @@ import VueAxios from 'vue-axios'
 import axios from 'axios'
 Vue.use(VueAxios, axios)
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1'
-
+// 添加请求拦截器
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = localStorage.getItem('token')
+  return config;
+});
 
 // 配置 ElementUI  --整体引入
 // import ElementUI from 'element-ui'
