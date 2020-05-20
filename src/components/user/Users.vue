@@ -26,22 +26,18 @@
             <el-switch v-model="tabledata.row.mg_state" active-color="#2E669B" inactive-color="#eeeeee" @change="setState(tabledata.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" prop="id">
-          <template v-slot:id="editId">
-            {{editId}}
-              <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="showEditDialog()"></el-button>
-          </template>
-
+        <el-table-column label="操作">
+          <template v-slot:default="tableData">
             <el-tooltip class="item" effect="dark" content="修改" placement="top">
-              <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="showEditDialog()"></el-button>
+              <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="showEditDialog(tableData.row.id)"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top">
-              <el-button icon="iconfont icon-lajitong" circle  class="table-btn"></el-button>
+              <el-button icon="iconfont icon-lajitong" circle  class="table-btn" @click="showDelDialog(tableData.row.username, tableData.row.id)"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="设置" placement="top">
               <el-button icon="iconfont icon-shezhi" circle  class="table-btn"></el-button>
             </el-tooltip>
-          
+          </template>
         </el-table-column>
       </el-table>
 
@@ -80,21 +76,31 @@
 
 
     <!-- 修改窗口 -->
-    <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="600px">
+    <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="600px" :close-on-click-modal="false">
       <el-form :label-position="labelPosition" label-width="80px" :model="editUserForm" :rules="rules" ref="editUserFormRef" :status-icon="true" :hide-required-asterisk="true">
         <el-form-item label="用户名" prop="username" :inline-message="true">
-          <el-input v-model="addUserForm.username" disabled=""></el-input>
+          <el-input v-model="editUserForm.username" disabled=""></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email" :inline-message="true">
-          <el-input v-model="addUserForm.email" type="email"></el-input>
+          <el-input v-model="editUserForm.email" type="email"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile" :inline-message="true">
-          <el-input v-model="addUserForm.mobile" type="number"></el-input>
+          <el-input v-model="editUserForm.mobile" type="number"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 认</el-button>
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 认</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 删除确认窗口 -->
+    <el-dialog title="删除用户" :visible.sync="delDialogVisible" width="30%">
+      <span>确定删除用户 </span>
+      <strong>{{delUserName}}?</strong>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="delUser">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -142,6 +148,14 @@ export default {
         email: '',
         mobile: ''
       },
+      // 修改
+      editDialogVisible: false,
+      editUserForm: {},
+      // 删除
+      delDialogVisible: false,
+      delUserName: '',
+      delUserId: '',
+      // 表单规则
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -158,8 +172,7 @@ export default {
           { validator: checkMobile, trigger: 'blur' }
         ]
       },
-      // 修改
-      editDialogVisible: false,
+      
 
     }
   },
@@ -225,7 +238,52 @@ export default {
       })
     },
     showEditDialog(id){
-      console.log(id)
+      this.editDialogVisible = true
+      this.axios.get(`/users/${id}`).then(res => {
+        console.log(res)
+        this.editUserForm = res.data.data
+      })
+    },
+    editUser(){
+      this.$refs.editUserFormRef.validate((boolean, object) => {
+        if(!boolean) return false
+        this.axios.put(`/users/${this.editUserForm.id}`, this.editUserForm).then(res => {
+          if(res.data.meta.status !=200 ){
+            this.$message({
+              message: res.data.meta.msg,
+              type: 'error',
+              center: true
+            })
+          } else {
+            this.$refs.editUserFormRef.resetFields()
+            this.editDialogVisible = false
+            this.$message({
+              message: '修改成功',
+              type: 'success',
+              center: true
+            })
+            this.getUserList()
+          }
+        })
+
+      })
+    },
+    showDelDialog(username, id){
+      this.delDialogVisible = true
+      this.delUserName = username
+      this.delUserId = id
+    },
+    delUser(){
+      this.axios.delete(`/users/${this.delUserId}`).then(res => {
+        if(res.data.meta.status != 200) return this.$message.error('删除失败')
+        this.delDialogVisible = false
+        this.$message({
+          message: '删除成功',
+          type: 'success',
+          center: true
+        })
+        this.getUserList()
+      })
     }
 
   }
