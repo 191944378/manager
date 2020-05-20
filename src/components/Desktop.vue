@@ -7,8 +7,6 @@
       <el-menu
         :default-active="activeIndex"
         class="el-menu-vertical-demo aside-menu"
-        @open="handleOpen"
-        @close="handleClose"
         active-text-color="#417cb4"
         background-color="#f8f9fd"
         unique-opened
@@ -101,19 +99,15 @@ export default {
   
   watch: {
     activeIndex: function(){
-      this.curPageName = document.querySelector('.el-menu-item.is-active').lastChild.innerHTML
+      this.curPageName = document.querySelector('.el-menu-item.is-active').lastChild.innerText
     }
   },
 
   methods: {
     async getMenueList(){
-      await this.axios.get('/menus').then(res => {
-        if(res.data.meta.status == 200){
-          this.menulist = res.data.data
-        } else {
-          console.log('左侧菜单请求失败')
-        }
-      })
+      const { data: res } = await this.axios.get('/menus')
+      if(res.meta.status == 200) return this.menulist = res.data
+      console.log('左侧菜单请求失败')
     },
     loginOut(){
       localStorage.removeItem('token')
@@ -125,12 +119,6 @@ export default {
       this.activeIndex = 'home'
       this.$router.push('/home')
     },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
-    },
     saveIndex(index){
       sessionStorage.setItem('activeIndex', index)
     }
@@ -140,8 +128,7 @@ export default {
 
 
 <style lang="less" scoped>
-  @checkfont: #417cb4;
-  @nomalfont: #6c757d;
+  @import "../assets/css/rule.less";
 
   .container{
     height: 100%;
