@@ -23,6 +23,14 @@ import {
   Pagination,
   Dialog,
   Tooltip,
+  Tag,
+  Tree,
+  Tabs,
+  TabPane,
+  Checkbox,
+  CheckboxButton,
+  CheckboxGroup,
+  MessageBox,
   Message
 } from 'element-ui'
 
@@ -50,5 +58,13 @@ Vue.use(Switch)
 Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tooltip)
+Vue.use(Tag)
+Vue.use(Tree)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Checkbox)
+Vue.use(CheckboxButton)
+Vue.use(CheckboxGroup)
+Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message
  
