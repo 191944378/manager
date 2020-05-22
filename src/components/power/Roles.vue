@@ -45,27 +45,25 @@
     </el-card>
 
     <!-- 权限设置弹窗 -->
-    <el-dialog title="提示" :visible.sync="setDialogVisible" width="600px">
+    <el-dialog title="提示" :visible.sync="setDialogVisible" width="600px" >
       <el-row class="dialog-right-content">
         <div class="content">
           <el-tabs :tab-position="setTabPosition">
             <el-tab-pane :label="item1.authName" v-for="(item1, idx1) in rightData" :key="item1.id">
               <div class="checkbox-item" v-for="(item2, idx2) in item1.children">
                 <el-checkbox class="checkbox-title" v-model="checkAll[item2.id].state"  @change="handleCheckAllChange(item2.id)" :key="item2.id">{{item2.authName}}</el-checkbox>
-                <el-checkbox-group v-model="checkedRights" @change="handleCheckedRightsChange">
-                  <el-checkbox v-for="(item3, idx3) in item2.children" :label="item3.id" :key="item3.id">{{item3.authName}}</el-checkbox>
+                <el-checkbox-group v-model="checkedRights">
+                  <el-checkbox v-for="(item3, idx3) in item2.children" :label="item3.id" :key="item3.id" @change="childrenChecked(item2.id)">{{item3.authName}}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </el-tab-pane>
           </el-tabs>
         </div>
         </el-col>
-
-        
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="setDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -90,9 +88,9 @@ export default {
         label: 'authName',
         children: 'children'
       },
-      checkAll: {
-      },
+      checkAll: {},
       checkedRights: [122, 123],
+      // changeId2: '', //改变的三级目录所在的二级目录
       }
   },
   created(){
@@ -133,19 +131,32 @@ export default {
       })
     },
     handleCheckAllChange(id) {
-      let changeRights = this.checkAll[id].children
+      console.log(id)
+      let arr1 = this.checkedRights
+      let arr2 = this.checkAll[id].children
       if (this.checkAll[id].state) {
-        this.checkedRights = this.checkedRights.filter((v, i) => i > -1)
+        this.checkedRights = Array.from(new Set([...arr1, ...arr2]))
       } else {
-        this.checkedRights = []
+        // set方法
+        let set1 = new Set(arr1)
+        arr2.forEach(v => set1.delete(v))
+        this.checkedRights = Array.from(set1)
+
+        // 过滤器方法
+        // this.checkedRights = Array.from(new Set(arr1.filter(v => !new Set(arr2).has(v))))
       }
-      console.log(this.checkedRights)
     },
-    handleCheckedRightsChange(value) {
-      console.log(value)
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.rightData.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.rightData.length;
+
+    childrenChecked(id2){
+      let arr1 = this.checkedRights
+      let arr2 = this.checkAll[id2].children
+      console.log(arr1,arr2)
+      let set1 = new Set(arr1)
+      let flag = true
+      arr2.forEach(v => {
+        if(!set1.has(v)) return flag = false
+      })
+      this.checkAll[id2].state = flag
     }
   }
 }
