@@ -94,7 +94,7 @@ export default {
     this.getMenueList()
   },
   updated(){
-    this.activeIndex = sessionStorage.activeIndex
+    // this.activeIndex = sessionStorage.activeIndex
   },
   
   watch: {
