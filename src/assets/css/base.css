@@ -9,9 +9,36 @@ html,
 a {
   text-decoration: none;
 }
+.operabar {
+  margin-bottom: 20px;
+}
+.btn-filst {
+  box-shadow: 0 8px 10px -4px rgba(19, 29, 121, 0.3);
+}
+.el-card {
+  margin-bottom: 20px;
+}
 .el-card.is-always-shadow {
   box-shadow: 0 0 35px 0 rgba(21, 29, 109, 0.1);
 }
 .el-input__inner {
   color: #6c757d;
+}
+.el-table {
+  font-size: 15px;
+  color: #6c757d;
+  margin-bottom: 16px;
+}
+.el-table tr td,
+.el-table tr th {
+  padding: 15px 0;
+}
+.el-table tr td .table-btn,
+.el-table tr th .table-btn {
+  margin-left: 0;
+  margin-right: 15px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  padding: 0;
 }
