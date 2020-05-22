@@ -1,9 +1,9 @@
 <template>
   <div class="container">
       <!-- 操作栏 -->
-      <el-row :gutter="0" type="flex" justify="space-between">
+      <el-row :gutter="0" type="flex" justify="space-between" class="operabar">
         <!-- 操作 -->
-          <el-button type="primary" icon="el-icon-plus" class="bt-adduser" @click="addDialogVisible = true">添加用户</el-button>
+          <el-button type="primary" icon="el-icon-plus" class="btn-filst" @click="addDialogVisible = true">添加用户</el-button>
         <!-- 搜索 -->
         <el-col :span="8">
             <el-input placeholder="搜索姓名" v-model="queryInfo.query" class="search-bg" clearable @clear="getUserList">
@@ -184,7 +184,7 @@ export default {
   methods: {
     async getUserList(){
       const {data: res} = await this.axios.get('/users', {params: this.queryInfo})
-        console.log(res)
+      console.log(res)
       if (res.meta.status == 200) {
         this.userTable = res.data.users
         this.getInfo.pagenum = res.data.pagenum
@@ -293,45 +293,15 @@ export default {
 <style lang="less" scoped>
   @import "../../assets/css/rule.less";
 
-  .bt-adduser{
-    box-shadow: 0 8px 10px -4px rgba(19, 29, 121, 0.3);
-  }
-
   .search-bg{
     /deep/.el-input__inner{
       background-color: #ebedf5;
     }
   }
 
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  /deep/.user-table{
-    font-size: 15px;
-    color: @nomalfont;
-    margin-bottom: 16px;
-     
-    tr{
-      td,th{
-        padding: 15px 0;
-
-        .table-btn{
-          margin-left: 0;
-          margin-right: 15px;
-          border: none;
-          background: none;
-          font-size: 16px;
-          padding: 0;
-        }
-      }
 
 
-    }
-  }
+ 
 
 
 </style>
