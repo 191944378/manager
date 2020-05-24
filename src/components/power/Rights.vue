@@ -1,11 +1,6 @@
 <template>
   <div class="container">
-    <!-- 操作栏 -->
-    <el-row :gutter="0" type="flex" justify="space-between" class="operabar">
-      <!-- 操作 -->
-        <el-button type="primary" icon="el-icon-plus" class="btn-filst" @click="addDialogVisible = true">添加用户</el-button>
-      
-    </el-row>
+    
     <el-card shadow="always">
       <el-table :data="rightTable" style="width: 100%">
         <el-table-column type="index"></el-table-column>
