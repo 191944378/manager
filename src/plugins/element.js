@@ -30,6 +30,9 @@ import {
   Checkbox,
   CheckboxButton,
   CheckboxGroup,
+  Select,
+  Option,
+  OptionGroup,
   MessageBox,
   Message
 } from 'element-ui'
@@ -65,6 +68,10 @@ Vue.use(TabPane)
 Vue.use(Checkbox)
 Vue.use(CheckboxButton)
 Vue.use(CheckboxGroup)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(OptionGroup)
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message
+Vue.prototype.$prompt = MessageBox.prompt;
  
