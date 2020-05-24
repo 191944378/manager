@@ -32,10 +32,10 @@
               <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="showEditDialog(tableData.row.id)"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top">
-              <el-button icon="iconfont icon-lajitong" circle  class="table-btn" @click="showDelDialog(tableData.row.username, tableData.row.id)"></el-button>
+              <el-button v-if="tableData.row.username != 'admin'" icon="iconfont icon-lajitong" circle  class="table-btn" @click="delBox(tableData.row.username, tableData.row.id)"></el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="设置" placement="top">
-              <el-button icon="iconfont icon-shezhi" circle  class="table-btn"></el-button>
+            <el-tooltip class="item" effect="dark" content="角色设置" placement="top">
+              <el-button v-if="tableData.row.username != 'admin'" icon="iconfont icon-shezhi" circle  class="table-btn" @click="showSetDialog(tableData.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -53,8 +53,8 @@
 
     
     <!-- 添加窗口 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="600px">
-      <el-form :label-position="labelPosition" label-width="80px" :model="addUserForm" :rules="rules" ref="addUserFormRef" :status-icon="true" :hide-required-asterisk="true">
+    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="600px" :close-on-click-modal="false">
+      <el-form :label-position="addLabelPosition" label-width="80px" :model="addUserForm" :rules="rules" ref="addUserFormRef" :status-icon="true" :hide-required-asterisk="true">
         <el-form-item label="用户名" prop="username" :inline-message="true">
           <el-input v-model="addUserForm.username" placeholder="必填"></el-input>
         </el-form-item>
@@ -76,8 +76,8 @@
 
 
     <!-- 修改窗口 -->
-    <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="600px" :close-on-click-modal="false">
-      <el-form :label-position="labelPosition" label-width="80px" :model="editUserForm" :rules="rules" ref="editUserFormRef" :status-icon="true" :hide-required-asterisk="true">
+    <el-dialog :destroy-on-close="true" title="修改用户信息" :visible.sync="editDialogVisible" width="500px" :close-on-click-modal="false">
+      <el-form label-width="70px" :model="editUserForm" :rules="rules" ref="editUserFormRef" :status-icon="true" :hide-required-asterisk="true">
         <el-form-item label="用户名" prop="username" :inline-message="true">
           <el-input v-model="editUserForm.username" disabled=""></el-input>
         </el-form-item>
@@ -90,17 +90,32 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editUser">确 认</el-button>
+        <el-button type="primary" @click="yesEdit">确 认</el-button>
       </span>
     </el-dialog>
 
-    <!-- 删除确认窗口 -->
-    <el-dialog title="删除用户" :visible.sync="delDialogVisible" width="30%">
-      <span>确定删除用户 </span>
-      <strong>{{delUserName}}?</strong>
+    <!-- 设置弹窗 -->
+    <el-dialog :destroy-on-close="true" @close="closeSet" title="设置角色" :visible.sync="setDialogVisible" width="500px" class="set-dialog">
+      <el-form ref="setUserFormRef" :model="setUserForm" label-width="70px" :label-position="setLabelPosition" :rules="rules" :hide-required-asterisk="true">
+        <el-form-item label="用户" class="form-info">
+          <strong>{{setUserForm.username}}</strong>
+        </el-form-item>
+        <el-form-item label="当前角色" class="form-info">
+          <strong>{{setUserForm.role}}</strong>
+        </el-form-item>
+        <div class="blank"></div>
+        <el-form-item label="更换角色" class="select" prop="selectRole">
+          <el-select v-model="setUserForm.value" placeholder="请选择" class="select-role">
+            <el-option v-for="item in setUserForm.options" :key="item.id" :label="item.roleName" :value="item.id">
+              <span class="select-val" style="float: left">{{ item.roleName }}</span>
+              <span class="select-des" style="float: right; color: #adb5bd; font-size: 13px">{{ item.roleDesc }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="delDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delUser">确 定</el-button>
+        <el-button @click="setDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="yesSet">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -141,20 +156,27 @@ export default {
       },
       // 添加用户
       addDialogVisible: false,
-      labelPosition: 'top',
+      addLabelPosition: 'top',
       addUserForm: {
         username: '',
         password: '',
         email: '',
-        mobile: ''
+        mobile: '',
       },
       // 修改
       editDialogVisible: false,
       editUserForm: {},
-      // 删除
-      delDialogVisible: false,
-      delUserName: '',
-      delUserId: '',
+      // 设置
+      setDialogVisible: false,
+      setLabelPosition: 'right',
+      setUserForm: {
+        id: '',
+        username: '',
+        role: '',
+        value: '',
+        options: []
+      },
+
       // 表单规则
       rules: {
         username: [
@@ -170,15 +192,17 @@ export default {
         ],
         mobile: [
           { validator: checkMobile, trigger: 'blur' }
+        ],
+        region: [
+          { required: true, message: '请选择新角色', trigger: 'change' }
         ]
       },
-      
-
     }
   },
 
   created(){
     this.getUserList()
+    this.getRoleList()
   },
 
   methods: {
@@ -244,7 +268,7 @@ export default {
         this.editUserForm = res.data.data
       })
     },
-    editUser(){
+    yesEdit(){
       this.$refs.editUserFormRef.validate((boolean, object) => {
         if(!boolean) return false
         this.axios.put(`/users/${this.editUserForm.id}`, this.editUserForm).then(res => {
@@ -268,24 +292,53 @@ export default {
 
       })
     },
-    showDelDialog(username, id){
-      this.delDialogVisible = true
-      this.delUserName = username
-      this.delUserId = id
-    },
-    delUser(){
-      this.axios.delete(`/users/${this.delUserId}`).then(res => {
-        if(res.data.meta.status != 200) return this.$message.error('删除失败')
-        this.delDialogVisible = false
-        this.$message({
-          message: '删除成功',
-          type: 'success',
-          center: true
+    delBox(username, id){
+      this.$confirm(`确定删除用户 ${username} ?`, '删除用户', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.delete(`/users/${id}`).then(res => {
+          if(res.data.meta.status != 200) return this.$message.error('删除失败')
+          this.$message({
+            message: '删除成功',
+            type: 'success',
+            center: true
+          })
+          this.getUserList()
         })
-        this.getUserList()
+      }).catch(()=> {return})
+    },
+    showSetDialog(data){
+      console.log(this.setUserForm)
+      this.setDialogVisible = true
+      this.setUserForm.username = data.username
+      this.setUserForm.role = data.role_name
+      this.setUserForm.id = data.id
+    },
+    async getRoleList(){
+      const {data: res} = await this.axios.get('/roles')
+      this.setUserForm.options = res.data
+    },
+    yesSet(){
+      this.$refs.setUserFormRef.validate((boolean, object) => {
+        if(!boolean) return false
+        this.axios.put(`/users/${this.setUserForm['id']}/role`, {rid: this.setUserForm['value']}).then(res => {
+          console.log(res)
+          if(res.data.meta.status != 200) return this.$message.error(`${res.data.meta.msg}`)
+          this.setDialogVisible = false
+          this.$message.success('角色更换成功')
+          this.getUserList()
+        })
       })
-    }
 
+    },
+    closeSet(){
+      this.setUserForm.value = ''
+      this.setUserForm.username = ''
+      this.setUserForm.role = ''
+      this.setUserForm.id = ''
+    }
   }
 }
 </script>
@@ -299,6 +352,20 @@ export default {
     }
   }
 
+  .set-dialog{
+    .el-form-item{
+      &.form-info{
+        margin: 0;
+      }
+    }
+    .blank{
+      height: 15px;
+    }
+    .select-role{
+      width: 100%;
+    }
+
+  }
 
 
  
