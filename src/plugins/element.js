@@ -33,6 +33,8 @@ import {
   Select,
   Option,
   OptionGroup,
+  Steps,
+  Step,
   MessageBox,
   Message
 } from 'element-ui'
@@ -71,6 +73,8 @@ Vue.use(CheckboxGroup)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(OptionGroup)
+Vue.use(Steps)
+Vue.use(Step)
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt;
