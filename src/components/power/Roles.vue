@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 操作栏 -->
     <el-row :gutter="0" type="flex" justify="space-between" class="operabar">
-        <el-button type="primary" icon="el-icon-plus" class="btn-filst">添加角色</el-button>
+        <el-button type="primary" icon="el-icon-plus" class="btn-filst" @click="addDialogVisible = true">添加角色</el-button>
     </el-row>
 
     <!-- 表格 -->
@@ -32,10 +32,10 @@
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column label="操作" v-slot="tableData">
           <el-tooltip class="item" effect="dark" content="修改" placement="top">
-            <el-button icon="iconfont icon-bianji" circle  class="table-btn"></el-button>
+            <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="editRole(tableData.row)"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="删除" placement="top">
-            <el-button icon="iconfont icon-lajitong" circle  class="table-btn"></el-button>
+            <el-button icon="iconfont icon-lajitong" circle  class="table-btn" @click="delRole(tableData.row.id)"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="分配权限" placement="top">
             <el-button icon="iconfont icon-shezhi" circle  class="table-btn" @click="openSetDialog(tableData.row)"></el-button>
@@ -43,6 +43,62 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+
+    <!-- 添加窗口 -->
+    <el-dialog title="添加角色" :visible.sync="addDialogVisible" width="600px" :close-on-click-modal="false" class="add-dialog" @close="closeAddDialog">
+      <el-steps :active="addStepActive" finish-status="success" simple class="add-step">
+        <el-step title="创建角色" ></el-step>
+        <el-step title="设置权限" ></el-step>
+      </el-steps>
+      <el-form v-if="addStepActive == 1" :label-position="addLabelPosition" label-width="80px" :model="addRoleForm" :rules="rules" ref="addRoleFormRef" :status-icon="true" :hide-required-asterisk="true">
+        <el-form-item label="角色名称" prop="rolename" :inline-message="true">
+          <el-input v-model="addRoleForm.rolename" placeholder="必填" autocomplete="on"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" :inline-message="true">
+          <el-input v-model="addRoleForm.describe" placeholder="选填"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-row v-if="addStepActive == 2" class="dialog-right-content">
+        <div class="content">
+          <el-tabs :tab-position="setTabPosition">
+            <el-tab-pane :label="item1.authName" v-for="(item1, idx1) in rightData" :key="item1.id">
+              <div class="checkbox-item" v-for="(item2, idx2) in item1.children">
+                <el-checkbox class="checkbox-title" v-model="checkAll[item2.id].state"  @change="handleCheckAllChange(item1.id, item2.id)" :key="item2.id">{{item2.authName}}</el-checkbox>
+                <el-checkbox-group v-model="checkedRights" @change="boxChange(item1.id, item2.id)">
+                  <el-checkbox v-for="(item3, idx3) in item2.children" :label="item3.id" :key="item3.id" @change="childrenChecked(item2.id)">{{item3.authName}}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+        </el-col>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button v-if="addStepActive == 1" @click="addDialogVisible = false">取 消</el-button>
+        <el-button v-if="addStepActive == 2" @click="addDialogVisible = false">暂不设置</el-button>
+        <el-button v-if="addStepActive == 1" type="primary" @click="yesAddRole">确 认</el-button>
+        <el-button v-if="addStepActive == 2" type="primary" @click="subSetDialog">确 认</el-button>
+      </span>
+    </el-dialog>
+
+
+    <!-- 修改窗口 -->
+    <el-dialog title="修改角色" :visible.sync="editDialogVisible" width="500px" :close-on-click-modal="false" class="edit-dialog">
+      <el-form label-width="80px" :model="editRoleForm" ref="editRoleFormRef" :rules="rules" :status-icon="true" @close="closeEditDialog" :hide-required-asterisk="true">
+        <el-form-item label="角色名称" prop="rolename">
+          <el-input v-model="editRoleForm.rolename"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="editRoleForm.describe"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="yesEditRole">确 认</el-button>
+      </span>
+    </el-dialog>
+
 
     <!-- 权限设置弹窗 -->
     <el-dialog title="提示" :visible.sync="setDialogVisible" width="660px" @close="closeSetDialog">
@@ -80,6 +136,21 @@ export default {
   data(){
     return {
       roleTable: [],  // 全部角色请求数据
+      // 添加角色弹窗
+        addDialogVisible: false,
+        addLabelPosition: 'top',
+        addStepActive: 1,
+        addRoleForm: {
+          rolename: '',
+          describe: '',
+        },
+      // 权限修改弹窗
+        editDialogVisible: false,  
+        editRoleId: '',
+        editRoleForm: {
+          rolename: '',
+          describe: ''
+        },
       // 权限设置弹窗
         setDialogVisible: false,  
         setTabPosition: 'left',
@@ -90,8 +161,15 @@ export default {
         rightData: [],  //全部权限树
         checkAll: {}, // 全部权限树的id和二级目录状态
         checkedRights: [],  //选中的id
-        curRoleId: ''  // 执行操作的角色
-        }
+        curRoleId: '',  // 执行操作的角色
+      // 表单规则
+      rules: {
+        rolename: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ]
+      }
+    }
   },
   created(){
     this.getRoleTable()  //加载角色表格数据
@@ -102,6 +180,59 @@ export default {
     async getRoleTable(){
       const {data: res} = await this.axios.get('/roles')
       this.roleTable = res.data
+      console.log(res)
+    },
+    // 添加角色
+    yesAddRole(){
+      this.$refs.addRoleFormRef.validate((boolean, object) => {
+        if(!boolean) return false
+        this.axios.post('/roles', {roleName: this.addRoleForm['rolename'], roleDesc: this.addRoleForm['describe']}).then(res => {
+          if(res.data.meta.status != 201) return this.$message.error('角色添加失败')
+          this.$message.success('角色添加成功！')
+          this.addStepActive = 2
+          //获取新添加的角色的id
+          this.axios.get('/roles').then(res =>{
+            this.roleTable = res.data.data
+            console.log(this.roleTable)
+            const curItem = this.roleTable.filter((item, idx) => item.roleName == this.addRoleForm.rolename)
+            this.curRoleId = curItem[0].id
+          })
+        })
+      })
+
+    },
+    // 删除角色
+    delRole(id){
+      this.$confirm('删除后不可恢复, 是否继续?', '删除角色', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const {data: res} = await this.axios.delete(`/roles/${id}`)
+        if(res.meta.status != 200){ return this.$message.error(res.meta.msg)}
+        this.$message.success('角色删除成功')
+        this.getRoleTable()
+      }).catch(() => {})
+    },
+    // 编辑角色
+    editRole(data){
+      console.log(data)
+      this.editDialogVisible = true
+      this.editRoleId = data.id
+      this.editRoleForm.rolename = data.roleName
+      this.editRoleForm.describe = data.roleDesc
+    },
+    yesEditRole(){
+      this.$refs.editRoleFormRef.validate((boolean, object) => {
+        if(!boolean) return false
+        this.axios.put(`roles/${this.editRoleId}`, {roleName: this.editRoleForm['rolename'], roleDesc: this.editRoleForm['describe']}).then(res => {
+          if(res.data.meta.status != 200) return this.$message.error(res.data.meta.msg)
+          this.$message.success('修改成功！')
+          this.getRoleTable()
+          this.editDialogVisible = false
+        })
+      })
+      
     },
     // 删除标签
     delTag(role, rightId){
@@ -195,20 +326,35 @@ export default {
       const {data: res} = await this.axios.post(`roles/${this.curRoleId}/rights`, {rids: ridsStr})
       if(res.meta.status == 200){
         this.setDialogVisible = false
-        this.$message.success('权限更新成功')
+        this.addDialogVisible = false
+        this.$message.success('权限设置成功')
         this.getRoleTable()
       } else {
         this.$message.error('权限更新失败')
+        console.log(ridsStr, this.curRoleId)
       }
-
     },
-    // 关闭窗口，清空数据
+    // 关闭设置窗口，清空数据
     closeSetDialog(){
       this.checkedRights = []
       this.curRoleId = ''
       for(let key in this.checkAll){
         this.checkAll[key].state = false
       }
+    },
+    // 关闭添加窗口，清空数据
+    closeAddDialog(){
+      this.curRoleId = ''
+      this.checkedRights = []
+      this.addRoleForm.rolename = ''
+      this.addRoleForm.describe = ''
+      this.addStepActive = 1
+    },
+    // 关闭修改窗口，清空数据
+    closeEditDialog(){
+      this.editRoleId = ''
+      this.editRoleForm.rolename = ''
+      this.editRoleForm.describe = ''
     }
   }
 }
@@ -255,7 +401,12 @@ export default {
           }
         }
       }
-      
+    }
+  }
+
+  .add-dialog{
+    .add-step{
+      margin-bottom: 20px;
     }
   }
 
