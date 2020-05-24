@@ -105,7 +105,7 @@
         </el-form-item>
         <div class="blank"></div>
         <el-form-item label="更换角色" class="select" prop="selectRole">
-          <el-select v-model="setUserForm.value" placeholder="请选择" class="select-role">
+          <el-select v-model="setUserForm.selectRole" placeholder="请选择" class="select-role">
             <el-option v-for="item in setUserForm.options" :key="item.id" :label="item.roleName" :value="item.id">
               <span class="select-val" style="float: left">{{ item.roleName }}</span>
               <span class="select-des" style="float: right; color: #adb5bd; font-size: 13px">{{ item.roleDesc }}</span>
@@ -173,10 +173,9 @@ export default {
         id: '',
         username: '',
         role: '',
-        value: '',
+        selectRole: '',
         options: []
       },
-
       // 表单规则
       rules: {
         username: [
@@ -193,9 +192,9 @@ export default {
         mobile: [
           { validator: checkMobile, trigger: 'blur' }
         ],
-        region: [
+        selectRole: [
           { required: true, message: '请选择新角色', trigger: 'change' }
-        ]
+        ],
       },
     }
   },
@@ -323,7 +322,7 @@ export default {
     yesSet(){
       this.$refs.setUserFormRef.validate((boolean, object) => {
         if(!boolean) return false
-        this.axios.put(`/users/${this.setUserForm['id']}/role`, {rid: this.setUserForm['value']}).then(res => {
+        this.axios.put(`/users/${this.setUserForm['id']}/role`, {rid: this.setUserForm['selectRole']}).then(res => {
           console.log(res)
           if(res.data.meta.status != 200) return this.$message.error(`${res.data.meta.msg}`)
           this.setDialogVisible = false
