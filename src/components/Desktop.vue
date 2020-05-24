@@ -237,7 +237,7 @@ export default {
       align-items: center;
 
       .nav-title {
-        color: @nomalfont;
+        color: @primary;
         font-size: 18px;
         text-indent: 0.5em;
         font-weight: 600;
