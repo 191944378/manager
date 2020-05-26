@@ -1,5 +1,10 @@
 @import "./rule.less";
 
+// vue指令，样式加载完前不显示元素
+[v-cloak] {
+  display: none;
+}
+
 body, html, #app{
   height: 100%;
   margin: 0;
@@ -22,15 +27,16 @@ a{
   &.is-always-shadow{
     box-shadow: 0 0 35px 0 rgba(21, 29, 109, 0.1);
   }
+  
 }
 // 输入框文字颜色
 .el-input__inner{
-  color: @nomalfont
+  color: @primary;
 }
 // 表格样式
 .el-table{
   font-size: 15px;
-  color: @nomalfont;
+  color: @primary;
   margin-bottom: 16px;
   tr{
     td,th{
