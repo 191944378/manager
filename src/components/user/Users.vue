@@ -22,7 +22,7 @@
         <el-table-column label="电话" prop="mobile"></el-table-column>
         <el-table-column label="角色" prop="role_name"></el-table-column>
         <el-table-column label="屏蔽 / 公开" prop="mg_state">
-          <template v-slot:default="tabledata">
+          <template v-slot="tabledata">
             <el-switch v-model="tabledata.row.mg_state" active-color="#2E669B" inactive-color="#eeeeee" @change="setState(tabledata.row)"></el-switch>
           </template>
         </el-table-column>
@@ -54,7 +54,7 @@
     
     <!-- 添加窗口 -->
     <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="600px" :close-on-click-modal="false">
-      <el-form :label-position="addLabelPosition" label-width="80px" :model="addUserForm" :rules="rules" ref="addUserFormRef" :status-icon="true" :hide-required-asterisk="true">
+      <el-form label-position="top" label-width="80px" :model="addUserForm" :rules="rules" ref="addUserFormRef" :status-icon="true" :hide-required-asterisk="true">
         <el-form-item label="用户名" prop="username" :inline-message="true">
           <el-input v-model="addUserForm.username" placeholder="必填"></el-input>
         </el-form-item>
@@ -96,7 +96,7 @@
 
     <!-- 设置弹窗 -->
     <el-dialog :destroy-on-close="true" @close="closeSet" title="设置角色" :visible.sync="setDialogVisible" width="500px" class="set-dialog">
-      <el-form ref="setUserFormRef" :model="setUserForm" label-width="70px" :label-position="setLabelPosition" :rules="rules" :hide-required-asterisk="true">
+      <el-form ref="setUserFormRef" :model="setUserForm" label-width="70px" label-position="right" :rules="rules" :hide-required-asterisk="true">
         <el-form-item label="用户" class="form-info">
           <strong>{{setUserForm.username}}</strong>
         </el-form-item>
@@ -156,7 +156,6 @@ export default {
       },
       // 添加用户
       addDialogVisible: false,
-      addLabelPosition: 'top',
       addUserForm: {
         username: '',
         password: '',
@@ -168,7 +167,6 @@ export default {
       editUserForm: {},
       // 设置
       setDialogVisible: false,
-      setLabelPosition: 'right',
       setUserForm: {
         id: '',
         username: '',
