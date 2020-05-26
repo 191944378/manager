@@ -35,8 +35,11 @@ import {
   OptionGroup,
   Steps,
   Step,
+  Cascader,
+  CascaderPanel,
   MessageBox,
-  Message
+  Message,
+  Loading
 } from 'element-ui'
 
 
@@ -75,7 +78,13 @@ Vue.use(Option)
 Vue.use(OptionGroup)
 Vue.use(Steps)
 Vue.use(Step)
+Vue.use(Cascader)
+Vue.use(CascaderPanel)
+
+Vue.use(Loading.directive);
+
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt;
+Vue.prototype.$loading = Loading.service;
  
