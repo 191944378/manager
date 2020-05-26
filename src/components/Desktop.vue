@@ -106,7 +106,11 @@ export default {
   methods: {
     async getMenueList(){
       const { data: res } = await this.axios.get('/menus')
-      if(res.meta.status == 200) return this.menulist = res.data
+      if(res.meta.status == 200) {
+        this.menulist = res.data
+        console.log('左侧菜单目录:', this.menulist)
+        return
+      }
       console.log('左侧菜单请求失败')
     },
     loginOut(){
