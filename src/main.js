@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -17,6 +18,22 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = localStorage.getItem('token')
   return config;
 });
+
+//引入moment插件
+import moment from 'moment'
+Vue.prototype.$moment = moment
+
+//引入vue文本编辑器 quill
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
+Vue.use(VueQuillEditor, /* { default global options } */)
+
+// 引入富文本编辑器 Tinymce
+import Editor from '@tinymce/tinymce-vue'
+Vue.component('editor', Editor)
+
 
 // 配置 ElementUI  --整体引入
 // import ElementUI from 'element-ui'
