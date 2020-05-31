@@ -3,7 +3,7 @@
       <!-- 操作栏 -->
       <el-row :gutter="0" type="flex" justify="space-between" class="operabar">
         <!-- 操作 -->
-          <el-button type="primary" icon="el-icon-plus" class="btn-filst" @click="addDialogVisible = true">添加用户</el-button>
+        <el-button type="primary" icon="el-icon-plus" class="btn-filst" @click="addDialogVisible = true">添加用户</el-button>
         <!-- 搜索 -->
         <el-col :span="8">
             <el-input placeholder="搜索姓名" v-model="queryInfo.query" class="search-bg" clearable @clear="getUserList">
