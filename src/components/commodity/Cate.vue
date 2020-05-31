@@ -11,11 +11,11 @@
     <el-card shadow="always" v-cloak>
       <el-table :data="cateData" style="width: 100%" row-key="cat_id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" v-loading="tableLoading" >
         <el-table-column label="分类名称" prop="cat_name" ></el-table-column>
-        <el-table-column label="是否有效" prop="cat_deleted" v-slot="tableData">
-          <i v-if="tableData.row.cat_deleted = true" class="el-icon-success icon-status-useful" style="color: #417cb4; margin-left: 20px"></i>
+        <el-table-column label="是否有效" prop="cat_deleted" v-slot="tableData" align="center">
+          <i v-if="tableData.row.cat_deleted = true" class="el-icon-success icon-status-useful" style="color: #417cb4"></i>
           <i v-else class="el-icon-error icon-status-unuseful" style="color: #adb5bd"></i>
         </el-table-column>
-        <el-table-column label="等级" prop="cat_level" v-slot="tableData">
+        <el-table-column label="等级" prop="cat_level" v-slot="tableData" align="center">
           <el-tag v-if="tableData.row.cat_level == 0" size="small" type="warning">一级</el-tag>
           <el-tag v-if="tableData.row.cat_level == 1" size="small" type="success">二级</el-tag>
           <el-tag v-if="tableData.row.cat_level == 2" size="small">三级</el-tag>
@@ -72,7 +72,6 @@ export default {
         props: {
           value: 'cat_id',
           label: 'cat_name',
-          expandTrigger: 'hover',
           checkStrictly: true
         }
       },
