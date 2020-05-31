@@ -17,17 +17,29 @@ a{
 // 操作栏
 .operabar{
   margin-bottom: 20px;
+  // 搜索框背景色
+  .search-bg{
+    /deep/.el-input__inner{
+      background-color: #ebedf5;
+    }
+  }
 }
+
 // 首要按钮加阴影
 .btn-filst{
   box-shadow: 0 8px 10px -4px rgba(19, 29, 121, 0.3);
 }
+// 卡片阴影
 .el-card{
   margin-bottom: 20px;
   &.is-always-shadow{
     box-shadow: 0 0 35px 0 rgba(21, 29, 109, 0.1);
   }
-  
+}
+// 卡片标签阴影
+.el-tabs--border-card{
+  box-shadow: 0 0 35px 0 rgba(21, 29, 109, 0.1);
+  border: none;
 }
 // 输入框文字颜色
 .el-input__inner{
@@ -51,5 +63,13 @@ a{
         padding: 0;
       }
     }
+  }
+}
+
+// vue富文本编辑器高度
+.ql-container{
+  min-height: 300px;
+  p{
+    color: #6c757d;
   }
 }
