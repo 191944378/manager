@@ -15,12 +15,20 @@
       <!-- 表格 -->
       <el-table :data="getInfo.goods" style="width: 100%">
         <el-table-column type="index"></el-table-column>
-        <el-table-column label="订单编号" prop="order_number" width="240"></el-table-column>
-        <el-table-column label="价格 / 元" prop="order_price"></el-table-column>
-        <el-table-column label="是否付款" prop="order_pay" align="center"></el-table-column>
-        <el-table-column label="是否发货" prop="is_send" align="center"></el-table-column>
-        <el-table-column label="下单时间" prop="create_time" :formatter="formatDate"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="订单编号" prop="order_number" min-width="220"></el-table-column>
+        <el-table-column label="价格 / 元" prop="order_price" align="center" min-width="60"></el-table-column>
+        <el-table-column label="是否付款" prop="order_pay" align="center" min-width="100" v-slot="tableData">
+          <el-tag v-if="tableData.row.order_pay == 0" type="warning">未支付</el-tag>
+          <el-tag v-if="tableData.row.order_pay == 1">支付宝</el-tag>
+          <el-tag v-if="tableData.row.order_pay == 2" type="success">微信</el-tag>
+          <el-tag v-if="tableData.row.order_pay == 3" type="info">银行卡</el-tag>
+        </el-table-column>
+        <el-table-column label="是否发货" prop="is_send" align="center" min-width="60" v-slot="tableData">
+          <i v-if="tableData.row.is_send == '是'" class="el-icon-success icon-status-useful" style="color: #417cb4"></i>
+          <i v-else class="el-icon-error icon-status-unuseful" style="color: #adb5bd"></i>
+        </el-table-column>
+        <el-table-column label="下单时间" prop="create_time" :formatter="formatDate" min-width="150"></el-table-column>
+        <el-table-column label="操作" min-width="120">
           <el-tooltip class="item" effect="dark" content="修改" placement="top">
             <el-button icon="iconfont icon-bianji" circle  class="table-btn"></el-button>
           </el-tooltip>
@@ -88,7 +96,7 @@ export default {
     formatDate(row, column, cellValue, index){
       let date = cellValue * 1000
       if (date === undefined) return ""
-      return this.$moment(date).format("YYYY-DD-MM HH:mm:ss")
+      return this.$moment(date).format("YYYY-DD-MM HH:mm")
     }
   }
 }
