@@ -38,7 +38,9 @@ vue init webpack 项目名
 
 
 
-# moment.js
+# moment.js -时间插件
+
+时间格式插件
 
 https://momentjs.com/
 
@@ -90,4 +92,20 @@ formatDate(row, column, cellValue, index){
 
 
 
-# 
+# vue-tinymce-editor -编辑器插件
+
+vue富文本编辑器插件
+
+https://github.com/dyonir/vue-tinymce-editor/#readme
+
+
+
+
+
+
+
+# @tinymce/tinymce-vue - 编辑器插件
+
+Tinymce富文本编辑器插件
+
+https://www.tiny.cloud/docs/integrations/vue/#tinymcevuejsintegrationquickstartguide
