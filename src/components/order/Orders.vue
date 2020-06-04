@@ -30,7 +30,7 @@
         <el-table-column label="下单时间" prop="create_time" :formatter="formatDate" min-width="150"></el-table-column>
         <el-table-column label="操作" min-width="120"  v-slot="tableData">
           <el-tooltip class="item" effect="dark" content="修改" placement="top">
-            <el-button icon="iconfont icon-bianji" circle  class="table-btn"></el-button>
+            <el-button icon="iconfont icon-bianji" circle  class="table-btn" @click="addressDialogVisible = true"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="物流跟踪" placement="top">
             <el-button v-if="tableData.row.order_pay != 0" icon="iconfont icon-dingwei1" circle  class="table-btn" @click="openLogiDialog(tableData.row.order_id)"></el-button>
@@ -69,15 +69,45 @@
     </el-dialog>
 
 
+    <!-- 地址窗口 -->
+    <el-dialog title="修改地址" :visible.sync="addressDialogVisible" width="600px">
+      <el-form :model="addressForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm" :hide-required-asterisk="true">
+        <el-form-item label="省市区/县" prop="city">
+          <el-cascader :options="addressForm.cityOptions" v-model="addressForm.selectedOptions" :props="{ expandTrigger: 'hover' }" style="width: 100%"></el-cascader>
+        </el-form-item>
+        <el-form-item label="省市区/县" prop="city">
+          <el-cascader :options="options" v-model="selectedOptions" :props="{ expandTrigger: 'hover' }" style="width: 100%"></el-cascader>
+        </el-form-item>
+         <el-form-item label="详细地址" prop="detailed">
+          <el-input v-model="addressForm.detailed"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button  @click="addressDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addressDialogVisible = false">确 认</el-button>
+      </span>
+    </el-dialog>
+    
+
+
   </div>
 
 </template>
 
 
 <script>
+import cityOptions from '../../plugins/provinces-china-master/city_data2017_element.js'
+import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 export default {
   data(){
     return {
+      rules: {
+        detailed: [
+          { required: true, message: '请输入详细地址', trigger: 'blur' },
+          { min: 8, message: '应多于8个字', trigger: 'blur' }
+        ],
+      },
       queryInfo: {
         query: '',
         pagenum: 1,
@@ -97,7 +127,7 @@ export default {
       },
       // 物流弹窗
       logiDialogVisible: false,
-       timeline: [{
+      timeline: [{
           content: '支持使用图标',
           timestamp: '2018-04-12 20:46',
           size: 'large',
@@ -113,7 +143,17 @@ export default {
         }, {
           content: '默认样式的节点',
           timestamp: '2018-04-03 20:46',
-        }]
+      }],
+      // 地址弹窗
+      addressDialogVisible : false,
+      addressForm: {
+        cityOptions: cityOptions,
+        detailed: '',
+        selectedOptions: ''
+      },
+      options: regionData,
+      selectedOptions: []
+
     }
 
   },
