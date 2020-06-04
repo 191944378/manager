@@ -28,12 +28,12 @@
           <i v-else class="el-icon-error icon-status-unuseful" style="color: #adb5bd"></i>
         </el-table-column>
         <el-table-column label="下单时间" prop="create_time" :formatter="formatDate" min-width="150"></el-table-column>
-        <el-table-column label="操作" min-width="120">
+        <el-table-column label="操作" min-width="120"  v-slot="tableData">
           <el-tooltip class="item" effect="dark" content="修改" placement="top">
             <el-button icon="iconfont icon-bianji" circle  class="table-btn"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="物流跟踪" placement="top">
-            <el-button icon="iconfont icon-dingwei1" circle  class="table-btn"></el-button>
+            <el-button v-if="tableData.row.order_pay != 0" icon="iconfont icon-dingwei1" circle  class="table-btn" @click="openLogiDialog(tableData.row.order_id)"></el-button>
           </el-tooltip>
         </el-table-column>
       </el-table>
@@ -47,6 +47,28 @@
         :total="getInfo.total">
       </el-pagination>
     </el-card>
+
+
+    <!-- 物流窗口 -->
+    <el-dialog title="物流跟踪" :visible.sync="logiDialogVisible" width="600px">
+      <el-timeline>
+        <el-timeline-item
+          v-for="(item, index) in timeline"
+          :key="index"
+          :icon="item.icon"
+          :type="item.type"
+          :color="item.color"
+          :size="item.size"
+          :timestamp="item.time">
+          {{item.context}}
+        </el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="logiDialogVisible = false">关 闭</el-button>
+      </span>
+    </el-dialog>
+
+
   </div>
 
 </template>
@@ -56,9 +78,8 @@
 export default {
   data(){
     return {
-      tableDate: [],
       queryInfo: {
-        query: 'mmm',
+        query: '',
         pagenum: 1,
         pagesize: 10,
         user_id: '',
@@ -73,7 +94,26 @@ export default {
         pagenum: 1,
         total: 0,
         goods: []
-      }
+      },
+      // 物流弹窗
+      logiDialogVisible: false,
+       timeline: [{
+          content: '支持使用图标',
+          timestamp: '2018-04-12 20:46',
+          size: 'large',
+          type: 'primary',
+          icon: 'el-icon-more'
+        }, {
+          content: '支持自定义颜色',
+          timestamp: '2018-04-03 20:46',
+          color: '#0bbd87'
+        }, {
+          content: '支持自定义尺寸',
+          timestamp: '2018-04-03 20:46',
+        }, {
+          content: '默认样式的节点',
+          timestamp: '2018-04-03 20:46',
+        }]
     }
 
   },
@@ -97,6 +137,22 @@ export default {
       let date = cellValue * 1000
       if (date === undefined) return ""
       return this.$moment(date).format("YYYY-DD-MM HH:mm")
+    },
+    // 获取物流跟踪数据
+    async openLogiDialog(id){
+      this.logiDialogVisible = true
+      const {data: res} = await this.axios.get(`/kuaidi/1106975712662`)
+      if (res.meta.status != 200 ) return this.$message.error(res.meta.msg)
+      this.timeline = res.data
+      this.timeline[0].size = 'large'
+      this.timeline[0].type = 'primary'
+      this.timeline[0].icon = 'el-icon-check'
+
+
+
+      console.log(res)
+
+      
     }
   }
 }
