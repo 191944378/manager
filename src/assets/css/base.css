@@ -58,3 +58,16 @@ a {
 .ql-container p {
   color: #6c757d;
 }
+.el-timeline .el-timeline-item__timestamp {
+  color: #adb5bd;
+}
+.el-timeline .el-timeline-item__node--normal {
+  width: 8px;
+  height: 8px;
+  left: 1px;
+}
+.el-timeline .el-timeline-item__node--large {
+  width: 18px;
+  height: 18px;
+  left: -4px;
+}
