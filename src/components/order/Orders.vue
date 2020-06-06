@@ -16,14 +16,14 @@
       <el-table :data="getInfo.goods" style="width: 100%">
         <el-table-column type="index"></el-table-column>
         <el-table-column label="订单编号" prop="order_number" min-width="220"></el-table-column>
-        <el-table-column label="价格 / 元" prop="order_price" align="center" min-width="60"></el-table-column>
+        <el-table-column label="价格 / 元" prop="order_price" align="center" min-width="80"></el-table-column>
         <el-table-column label="是否付款" prop="order_pay" align="center" min-width="100" v-slot="tableData">
           <el-tag v-if="tableData.row.order_pay == 0" type="warning">未支付</el-tag>
           <el-tag v-if="tableData.row.order_pay == 1">支付宝</el-tag>
           <el-tag v-if="tableData.row.order_pay == 2" type="success">微信</el-tag>
           <el-tag v-if="tableData.row.order_pay == 3" type="info">银行卡</el-tag>
         </el-table-column>
-        <el-table-column label="是否发货" prop="is_send" align="center" min-width="60" v-slot="tableData">
+        <el-table-column label="是否发货" prop="is_send" align="center" min-width="80" v-slot="tableData">
           <i v-if="tableData.row.is_send == '是'" class="el-icon-success icon-status-useful" style="color: #417cb4"></i>
           <i v-else class="el-icon-error icon-status-unuseful" style="color: #adb5bd"></i>
         </el-table-column>
