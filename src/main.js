@@ -12,12 +12,21 @@ import './assets/css/base.css'
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 Vue.use(VueAxios, axios)
+// 引入 NProgress
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1'
 // 添加请求拦截器
 axios.interceptors.request.use(config => {
+  NProgress.start()
   config.headers.Authorization = localStorage.getItem('token')
   return config;
 });
+axios.interceptors.response.use(config => {
+  NProgress.done()
+  return config
+})
 
 //引入moment插件
 import moment from 'moment'
@@ -33,6 +42,8 @@ Vue.use(VueQuillEditor, /* { default global options } */)
 // 引入富文本编辑器 Tinymce
 import Editor from '@tinymce/tinymce-vue'
 Vue.component('editor', Editor)
+
+
 
 
 // 配置 ElementUI  --整体引入
