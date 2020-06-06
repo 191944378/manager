@@ -126,7 +126,7 @@ https://github.com/Plortinus/element-china-area-data#readme
 
 
 
-# echarts -图标插件
+# echarts -图表插件
 
 https://echarts.apache.org/zh/index.html
 
@@ -264,5 +264,36 @@ data(){
       console.log('图表数据:', this.option)
     }
   }
+```
+
+
+
+
+
+
+
+# NProgress 页面加载进度条
+
+
+
+1. Main.js 中引入
+
+```javascript
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+```
+
+2. 修改请求拦截器的配置
+
+```javascript
+axios.interceptors.request.use(config => {
+  NProgress.start()
+  config.headers.Authorization = localStorage.getItem('token')
+  return config;
+});
+axios.interceptors.response.use(config => {
+  NProgress.done()
+  return config
+})
 ```
 
