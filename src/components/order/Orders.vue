@@ -73,9 +73,6 @@
     <el-dialog title="修改地址" :visible.sync="addressDialogVisible" width="600px">
       <el-form :model="addressForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm" :hide-required-asterisk="true">
         <el-form-item label="省市区/县" prop="city">
-          <el-cascader :options="addressForm.cityOptions" v-model="addressForm.selectedOptions" :props="{ expandTrigger: 'hover' }" style="width: 100%"></el-cascader>
-        </el-form-item>
-        <el-form-item label="省市区/县" prop="city">
           <el-cascader :options="options" v-model="selectedOptions" :props="{ expandTrigger: 'hover' }" style="width: 100%"></el-cascader>
         </el-form-item>
          <el-form-item label="详细地址" prop="detailed">
@@ -97,7 +94,6 @@
 
 
 <script>
-import cityOptions from '../../plugins/provinces-china-master/city_data2017_element.js'
 import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 export default {
   data(){
@@ -147,7 +143,6 @@ export default {
       // 地址弹窗
       addressDialogVisible : false,
       addressForm: {
-        cityOptions: cityOptions,
         detailed: '',
         selectedOptions: ''
       },
