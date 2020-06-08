@@ -2,10 +2,6 @@ import Vue from 'vue'
 import { 
   Pagination,
   Dialog,
-  Autocomplete,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Menu,
   Submenu,
   MenuItem,
@@ -26,10 +22,6 @@ import {
   ButtonGroup,
   Table,
   TableColumn,
-  DatePicker,
-  TimeSelect,
-  TimePicker,
-  Popover,
   Tooltip,
   Breadcrumb,
   BreadcrumbItem,
@@ -46,14 +38,10 @@ import {
   Col,
   Upload,
   Progress,
-  Spinner,
-  Badge,
   Card,
   Rate,
   Steps,
   Step,
-  Carousel,
-  CarouselItem,
   Collapse,
   CollapseItem,
   Cascader,
@@ -66,12 +54,7 @@ import {
   Footer,
   Timeline,
   TimelineItem,
-  Link,
-  Divider,
   Image,
-  Calendar,
-  Backtop,
-  PageHeader,
   CascaderPanel,
   Loading,
   MessageBox,
@@ -82,10 +65,6 @@ import {
 
 Vue.use(Pagination);
 Vue.use(Dialog);
-Vue.use(Autocomplete);
-Vue.use(Dropdown);
-Vue.use(DropdownMenu);
-Vue.use(DropdownItem);
 Vue.use(Menu);
 Vue.use(Submenu);
 Vue.use(MenuItem);
@@ -106,13 +85,7 @@ Vue.use(Button);
 Vue.use(ButtonGroup);
 Vue.use(Table);
 Vue.use(TableColumn);
-Vue.use(DatePicker);
-Vue.use(TimeSelect);
-Vue.use(TimePicker);
-Vue.use(Popover);
 Vue.use(Tooltip);
-Vue.use(Breadcrumb);
-Vue.use(BreadcrumbItem);
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(Tabs);
@@ -126,14 +99,10 @@ Vue.use(Row);
 Vue.use(Col);
 Vue.use(Upload);
 Vue.use(Progress);
-Vue.use(Spinner);
-Vue.use(Badge);
 Vue.use(Card);
 Vue.use(Rate);
 Vue.use(Steps);
 Vue.use(Step);
-Vue.use(Carousel);
-Vue.use(CarouselItem);
 Vue.use(Collapse);
 Vue.use(CollapseItem);
 Vue.use(Cascader);
@@ -146,13 +115,10 @@ Vue.use(Main);
 Vue.use(Footer);
 Vue.use(Timeline);
 Vue.use(TimelineItem);
-Vue.use(Link);
-Vue.use(Divider);
 Vue.use(Image);
-Vue.use(Calendar);
-Vue.use(Backtop);
-Vue.use(PageHeader);
 Vue.use(CascaderPanel);
+Vue.use(Breadcrumb);
+Vue.use(BreadcrumbItem);
 
 Vue.use(Loading.directive);
 
