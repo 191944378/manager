@@ -56,7 +56,7 @@
         <div class="main-nav-box">
           <div class="nav-title">{{curPageName}}</div>
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/' }" v-if="current">首页</el-breadcrumb-item>
             <el-breadcrumb-item v-if="current">用户管理</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
@@ -123,7 +123,9 @@ export default {
       this.$router.push('/home')
     },
     saveIndex(index){
+      console.log(2)
       sessionStorage.setItem('activeIndex', index)
+      // this.$store.commit('selectMenu', )
     }
   },
 }
