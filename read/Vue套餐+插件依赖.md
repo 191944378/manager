@@ -18,6 +18,8 @@ https://router.vuejs.org/zh/
 
 https://cli.vuejs.org/zh/guide/installation.html
 
+用vue ui创建就行了，不用手动了
+
 
 
 ### 1. 安装
@@ -37,6 +39,10 @@ vue init webpack 项目名
 
 
 
+
+# Vuex -规模数据管理
+
+https://vuex.vuejs.org/zh/
 
 
 
@@ -381,6 +387,7 @@ module.exports = {
 <!-- js 文件 -->
 <script src="https://cdn.staticfile.org/vue/2.5.22/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-router/3.0.1/vue-router.min.js"></script>
+<script src="https://unpkg.com/vuex@3.4.0/dist/vuex.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/lodash.js/4.17.11/lodash.min.js"></script>
 <script src="https://cdn.staticfile.org/echarts/4.1.0/echarts.min.js"></script>
@@ -405,7 +412,7 @@ module.exports = {
     // 开发模式
     config.when(process.env.NODE_ENV === 'development', config => {
       config.entry('app').clear().add('./src/main-dev.js')
-      config.plugin('html').tap(args => {
+        config.plugin('html').tap(args => {
         args[0].isProd = false
         return args
       })
@@ -416,6 +423,7 @@ module.exports = {
       config.entry('app').clear().add('./src/main-prod.js')
       config.set('externals', {
         vue: 'Vue',
+        vuex: 'Vuex',
         'vue-router': 'VueRouter',
         axios: 'axios',
         echarts: 'echarts',
@@ -430,10 +438,70 @@ module.exports = {
     })
   }
 }
-
 ```
 
 3. 删除 main-pro 中所有引入css样式 & 删除 引入的./plugins/element.js(无需按需引入)
+
+```javascript
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+// import './plugins/element.js' 
+import './assets/css/element-variables.scss'
+import './assets/font/iconfont.css'
+import './assets/css/base.css'
+
+// 安装vuex
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+// 配置 axious 全局默认值
+import VueAxios from 'vue-axios'
+import axios from 'axios'
+Vue.use(VueAxios, axios)
+// 引入 NProgress
+import NProgress from 'nprogress'
+// import 'nprogress/nprogress.css'
+
+axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1'
+// 添加请求拦截器
+axios.interceptors.request.use(config => {
+  NProgress.start()
+  config.headers.Authorization = localStorage.getItem('token')
+  return config;
+});
+axios.interceptors.response.use(config => {
+  NProgress.done()
+  return config
+})
+
+//引入moment插件
+import moment from 'moment'
+Vue.prototype.$moment = moment
+
+//引入vue文本编辑器 quill
+import VueQuillEditor from 'vue-quill-editor'
+// import 'quill/dist/quill.core.css' // import styles
+// import 'quill/dist/quill.snow.css' // for snow theme
+// import 'quill/dist/quill.bubble.css' // for bubble theme
+Vue.use(VueQuillEditor, /* { default global options } */)
+
+// 引入富文本编辑器 Tinymce
+import Editor from '@tinymce/tinymce-vue'
+Vue.component('editor', Editor)
+
+
+
+Vue.config.productionTip = false
+
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+```
 
 
 
