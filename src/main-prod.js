@@ -8,6 +8,7 @@ import './assets/css/element-variables.scss'
 import './assets/font/iconfont.css'
 import './assets/css/base.css'
 
+
 // 配置 axious 全局默认值
 import VueAxios from 'vue-axios'
 import axios from 'axios'
