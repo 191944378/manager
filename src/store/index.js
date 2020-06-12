@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     selectMenu(state, val){
-      val.name == 'home'? state.currentMenu = null : state.currentMenu = val
+      val == 'home'? state.currentMenu = null : state.currentMenu = val
     }
   },
   actions: {
