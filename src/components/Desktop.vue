@@ -23,7 +23,7 @@
           <a href="" class="iconfont icon-RectangleCopy57" @click.prevent="isCollapse = !isCollapse"></a>
         </div>
         <!-- 主页 -->
-        <el-menu-item index="home" @click="saveIndex('home')">
+        <el-menu-item index="home" @click="saveIndex({path: 'home'})">
           <i class="iconfont icon-RectangleCopy33"></i>
           <span slot="title">首页</span>
         </el-menu-item>
@@ -33,7 +33,7 @@
             <i :class="'iconfont'+ ' ' + menuicon[item.id]"></i>
             <span slot="title">{{item.authName}}</span>
           </template>
-          <el-menu-item :index="child.path" :key="child.id" v-for="child in item.children" @click="saveIndex(child.path)">
+          <el-menu-item :index="child.path" :key="child.id" v-for="child in item.children" @click="saveIndex(child)">
             <span class="secondmenu">{{child.authName}}</span>
           </el-menu-item>
         </el-submenu>
@@ -54,10 +54,10 @@
 
         <!-- 标题 -->
         <div class="main-nav-box">
-          <div class="nav-title">{{curPageName}}</div>
+          <div class="nav-title">{{currentBread ? currentBread.authName : '首页'}}</div>
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }" v-if="current">首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="current">用户管理</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="currentBread" :to="{ path: '/home' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="currentBread">{{currentBread.authName}}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
 
@@ -91,14 +91,15 @@ export default {
 
   created(){
     this.getMenueList()
+    this.activeIndex = sessionStorage.getItem('activeIndex')
   },
   updated(){
     // this.activeIndex = sessionStorage.activeIndex
   },
   
-  watch: {
-    activeIndex: function(){
-      this.curPageName = document.querySelector('.el-menu-item.is-active').lastChild.innerText
+  computed: {
+    currentBread(){
+      return this.$store.state.currentMenu
     }
   },
 
@@ -122,10 +123,10 @@ export default {
       this.activeIndex = 'home'
       this.$router.push('/home')
     },
-    saveIndex(index){
-      console.log(2)
-      sessionStorage.setItem('activeIndex', index)
-      // this.$store.commit('selectMenu', )
+    saveIndex(val){
+      console.log(val)
+      sessionStorage.setItem('activeIndex', val.path)
+      this.$store.commit('selectMenu', val)
     }
   },
 }
